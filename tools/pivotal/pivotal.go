@@ -124,24 +124,10 @@ func main() {
 		log.Fatalf("Error making client:  %v", err)
 	}
 
-	http.HandleFunc("/post", YammerPoster)
+	http.HandleFunc("/", YammerPoster)
 	log.Printf("Listening on %s", addr)
 	err = http.ListenAndServe(addr, nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
-
-	/*
-		req := yammer.MessageRequest{
-			Body:     string(msg),
-			GroupId:  groupId,
-			ReplyTo:  replyTo,
-			DirectTo: directTo,
-		}
-
-		err = client.PostMessage(req)
-		if err != nil {
-			log.Fatalf("Error posting message:  %v", err)
-		}
-	*/
 }
