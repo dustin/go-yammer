@@ -1,3 +1,4 @@
+// A yammer client.
 package yammer
 
 import (
