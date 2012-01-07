@@ -2,6 +2,7 @@ package yammer
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 )
 
@@ -35,4 +36,21 @@ func (c *Client) PostMessage(req MessageRequest) error {
 	res.Body.Close()
 
 	return nil
+}
+
+// Get messages for the given topic (by ID)
+func (c *Client) MessagesByTopic(topic int) ([]Message, error) {
+	u := fmt.Sprintf("https://www.yammer.com/api/v1/messages/about_topic/%d.json", topic)
+
+	type rvT struct {
+		Messages []Message
+	}
+
+	rv := rvT{}
+
+	if err := decodeReq(c, u, &rv); err != nil {
+		return rv.Messages, err
+	}
+
+	return rv.Messages, nil
 }

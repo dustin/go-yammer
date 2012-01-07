@@ -6,16 +6,19 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/dustin/yammer.go"
 )
 
-var key, secret, filename string
+var key, secret, filename, arg string
 
 func init() {
 	flag.StringVar(&key, "key", "", "consumer key")
 	flag.StringVar(&secret, "secret", "", "consumer secret")
 	flag.StringVar(&filename, "authfile", "../.auth", "auth file path")
+
+	flag.StringVar(&arg, "arg", "", "Argument for lists that require them.")
 }
 
 type listerFunc func(c *yammer.Client) (interface{}, error)
@@ -50,6 +53,13 @@ func main() {
 	funcs := map[string]listerFunc{
 		"groups": func(c *yammer.Client) (interface{}, error) { return c.ListGroups() },
 		"users":  func(c *yammer.Client) (interface{}, error) { return c.ListUsers() },
+		"topic": func(c *yammer.Client) (interface{}, error) {
+			n, err := strconv.ParseInt(arg, 10, 0)
+			if err != nil {
+				log.Fatalf("Can't parse '%s' as number (be better at -arg)", arg)
+			}
+			return c.MessagesByTopic(int(n))
+		},
 	}
 
 	if flag.NArg() == 0 {

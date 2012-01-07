@@ -49,6 +49,34 @@ type Group struct {
 	CreatedAt   *string `json:"created_at"`
 }
 
+// Message as returned from a message list API
+type Message struct {
+	MessageType *string `json:"message_type"`
+	LikedBy     struct {
+		Count int
+		Names []map[string]string
+	}                 `json:"liked_by"`
+	CreatedAt *string `json:"created_at"`
+	ThreadId  int     `json:"thread_id"`
+	APIURL    *string `json:"url"`
+	NetworkID int     `json:"network_id"`
+	Body      struct {
+		Plain  string
+		Parsed string
+	}
+	Privacy       *string
+	ClientURL     *string `json:"client_url"`
+	SenderType    *string `json:"sender_type"`
+	ID            int
+	SystemMessage bool `json:"system_message"`
+	Attachments   []interface{}
+	SenderId      int     `json:"sender_id"`
+	RepliedTo     *int    `json:"replied_to_id"`
+	ClientType    *string `json:"client_type"`
+	DirectMessage bool    `json:"direct_message"`
+	YURL          *string `json:"web_url"`
+}
+
 // Message request object for PostMessage
 type MessageRequest struct {
 	Body      string // Message body (required)
