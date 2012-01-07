@@ -5,6 +5,7 @@ import (
 	"strconv"
 )
 
+// Post a message.
 func (c *Client) PostMessage(req MessageRequest) error {
 	u := "https://www.yammer.com/api/v1/messages.json"
 

@@ -4,6 +4,7 @@ import (
 	oauth "github.com/alloy-d/goauth"
 )
 
+// User as returned from ListUsers, etc...
 type User struct {
 	SO                *string                  `json:"significant_other,omitempty"`
 	Schools           []map[string]interface{} `json:"schools,omitempty"`
@@ -33,6 +34,7 @@ type User struct {
 	JobTitle          *string `json:"job_title,omitempty"`
 }
 
+// Group as returned from ListGroups, etc...
 type Group struct {
 	Privacy     string
 	URL         string `json:"web_url"`
@@ -46,14 +48,16 @@ type Group struct {
 	CreatedAt   *string `json:"created_at"`
 }
 
+// Message request object for PostMessage
 type MessageRequest struct {
-	Body      string
-	GroupId   int
-	ReplyTo   int
-	DirectTo  int
-	Broadcast bool
+	Body      string // Message body (required)
+	GroupId   int    // The group to post to (optional)
+	ReplyTo   int    // Message in reply to (optional)
+	DirectTo  int    // ID of the user to whom this message is directed (optional)
+	Broadcast bool   // True if an administrative broadcast
 }
 
+// The client.
 type Client struct {
 	oauth oauth.OAuth
 }
