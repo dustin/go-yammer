@@ -54,12 +54,7 @@ func parseInt(params url.Values, key string) int {
 	return int(i)
 }
 
-func YammerPoster(w http.ResponseWriter, req *http.Request) {
-	if req.Method != "POST" {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		w.Write([]byte("POST required"))
-		return
-	}
+func yammerPoster(w http.ResponseWriter, req *http.Request) {
 	input := inputxml{}
 	if err := xml.Unmarshal(req.Body, &input); err != nil {
 		w.WriteHeader(400)
@@ -109,6 +104,50 @@ func YammerPoster(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(201)
 }
 
+func groupLister(w http.ResponseWriter, req *http.Request) {
+	groups, err := client.ListGroups()
+	if err != nil {
+		w.WriteHeader(500)
+		fmt.Fprintf(w, "Problem listing groups:  %v", err)
+		return
+	}
+
+	header := []byte(`<html>
+<head>
+  <title>Group List</title>
+  <style type="text/css">
+    dt { font-weight: bold }
+    dd { font-family: monospace }
+  </style>
+</head>
+<body>
+  <h1>List of Groups and their IDs</h1>
+<dl>`)
+	footer := []byte(`</dl></body></html>`)
+
+	w.Header().Set("content-type", "text/html")
+	w.Write(header)
+	defer w.Write(footer)
+
+	for _, g := range groups {
+		msg := fmt.Sprintf("<dt>%s</dt><dd>%d</dd>\n", g.FullName, g.ID)
+		w.Write([]byte(msg))
+	}
+}
+
+func yammerHandler(w http.ResponseWriter, req *http.Request) {
+	switch req.Method {
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		fmt.Fprintf(w, "Excpected GET or POST, got %s", req.Method)
+		return
+	case "POST":
+		yammerPoster(w, req)
+	case "GET":
+		groupLister(w, req)
+	}
+}
+
 func main() {
 	flag.Parse()
 
@@ -124,7 +163,7 @@ func main() {
 		log.Fatalf("Error making client:  %v", err)
 	}
 
-	http.HandleFunc("/", YammerPoster)
+	http.HandleFunc("/", yammerHandler)
 	log.Printf("Listening on %s", addr)
 	err = http.ListenAndServe(addr, nil)
 	if err != nil {
