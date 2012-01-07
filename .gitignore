@@ -2,6 +2,7 @@
 *.6
 *.a
 *~
+/tools/.auth
 /tools/auth/auth
 /tools/list/list
 /tools/post/post
