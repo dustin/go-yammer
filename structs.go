@@ -33,6 +33,19 @@ type User struct {
 	JobTitle          *string `json:"job_title,omitempty"`
 }
 
+type Group struct {
+	Privacy     string
+	URL         string `json:"web_url"`
+	Stats       map[string]interface{}
+	Avatar      *string `json:"mugshot_url,omitempty"`
+	YURL        *string `json:"url,omitempty"`
+	Description *string
+	FullName    *string `json:"full_name,omitempty"`
+	Name        *string
+	ID          int
+	CreatedAt   *string `json:"created_at"`
+}
+
 type Client struct {
 	oauth oauth.OAuth
 }
