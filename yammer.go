@@ -32,29 +32,35 @@ func New(authFile, key, secret string) (Client, error) {
 	return client, nil
 }
 
-// Get the full list of users.
-func (c *Client) ListUsers() ([]User, error) {
-	u := "https://www.yammer.com/api/v1/users.json"
-
-	rv := make([]User, 0)
-
+func decodeReq(c *Client, u string, rv interface{}) error {
 	params := make(map[string]string)
 	res, err := c.oauth.Get(u, params)
 	if err != nil {
-		return rv, err
+		return err
 	}
 
 	if res.StatusCode != 200 {
-		return rv, errors.New(res.Status)
+		return errors.New(res.Status)
 	}
 
 	defer res.Body.Close()
 
 	d := json.NewDecoder(res.Body)
 	if err = d.Decode(&rv); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Get the full list of users.
+func (c *Client) ListUsers() ([]User, error) {
+	u := "https://www.yammer.com/api/v1/users.json"
+
+	rv := make([]User, 0)
+	if err := decodeReq(c, u, &rv); err != nil {
 		return rv, err
 	}
 
 	return rv, nil
-
 }
