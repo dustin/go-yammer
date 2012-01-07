@@ -43,8 +43,8 @@ type Group struct {
 	Avatar      *string `json:"mugshot_url,omitempty"`
 	YURL        *string `json:"url,omitempty"`
 	Description *string
-	FullName    *string `json:"full_name,omitempty"`
-	Name        *string
+	FullName    string `json:"full_name"`
+	Name        string
 	ID          int
 	CreatedAt   *string `json:"created_at"`
 }
