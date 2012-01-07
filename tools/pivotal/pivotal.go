@@ -54,17 +54,27 @@ func parseInt(params url.Values, key string) int {
 	return int(i)
 }
 
+func debugLog(input inputxml, output yammer.MessageRequest) {
+	inputj, e := json.MarshalIndent(input, "", "  ")
+	if e != nil {
+		log.Printf("Error generating input JSON:  %v", e)
+		return
+	}
+	outputj, e := json.MarshalIndent(output, "", "  ")
+	if e != nil {
+		log.Printf("Error generating output JSON:  %v", e)
+		return
+	}
+
+	log.Printf("Input:\n%s\nOutput:\n%s\n", inputj, outputj)
+
+}
+
 func yammerPoster(w http.ResponseWriter, req *http.Request) {
 	input := inputxml{}
 	if err := xml.Unmarshal(req.Body, &input); err != nil {
 		w.WriteHeader(400)
 		fmt.Fprintf(w, "Error parsing input:  %v", err)
-		return
-	}
-	inputj, e := json.MarshalIndent(input, "", "  ")
-	if e != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "Error generating input JSON:  %v", e)
 		return
 	}
 
@@ -86,14 +96,7 @@ func yammerPoster(w http.ResponseWriter, req *http.Request) {
 		DirectTo: parseInt(params, "direct_to"),
 	}
 
-	outputj, e := json.MarshalIndent(yreq, "", "  ")
-	if e != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "Error generating output JSON:  %v", e)
-		return
-	}
-
-	log.Printf("Input:\n%s\nOutput:\n%s\n", inputj, outputj)
+	go debugLog(input, yreq)
 
 	if err := client.PostMessage(yreq); err != nil {
 		w.WriteHeader(500)
