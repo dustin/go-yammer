@@ -3,7 +3,6 @@
 *.a
 *~
 /tools/auth/auth
-/tools/listgroups/listgroups
-/tools/listusers/listusers
+/tools/list/list
 6.out
 _*

@@ -1,6 +1,6 @@
 include $(GOROOT)/src/Make.inc
 
-TARG=listgroups
-GOFILES=listgroups.go
+TARG=list
+GOFILES=list.go
 
 include $(GOROOT)/src/Make.cmd
