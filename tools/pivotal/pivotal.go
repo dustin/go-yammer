@@ -76,7 +76,7 @@ func yammerPoster(w http.ResponseWriter, req *http.Request) {
 	if err := xml.Unmarshal(req.Body, &input); err != nil {
 		w.WriteHeader(400)
 		fmt.Fprintf(io.MultiWriter(w, os.Stdout),
-			"Error parsing input:  %v", err)
+			"Error parsing input:  %v\n", err)
 		return
 	}
 
@@ -103,7 +103,7 @@ func yammerPoster(w http.ResponseWriter, req *http.Request) {
 	if err := client.PostMessage(yreq); err != nil {
 		w.WriteHeader(500)
 		fmt.Fprintf(io.MultiWriter(w, os.Stdout),
-			"Error posting message:  %v", err)
+			"Error posting message:  %v\n", err)
 		return
 	}
 
@@ -147,7 +147,7 @@ func yammerHandler(w http.ResponseWriter, req *http.Request) {
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		fmt.Fprintf(io.MultiWriter(w, os.Stdout),
-			"Excpected GET or POST, got %s", req.Method)
+			"Expected GET or POST, got %s\n", req.Method)
 		return
 	case "POST":
 		yammerPoster(w, req)
