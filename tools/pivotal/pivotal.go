@@ -5,6 +5,7 @@ import (
 	"encoding/xml"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -74,7 +75,8 @@ func yammerPoster(w http.ResponseWriter, req *http.Request) {
 	input := inputxml{}
 	if err := xml.Unmarshal(req.Body, &input); err != nil {
 		w.WriteHeader(400)
-		fmt.Fprintf(w, "Error parsing input:  %v", err)
+		fmt.Fprintf(io.MultiWriter(w, os.Stdout),
+			"Error parsing input:  %v", err)
 		return
 	}
 
@@ -100,7 +102,8 @@ func yammerPoster(w http.ResponseWriter, req *http.Request) {
 
 	if err := client.PostMessage(yreq); err != nil {
 		w.WriteHeader(500)
-		fmt.Fprintf(w, "Error posting message:  %v", err)
+		fmt.Fprintf(io.MultiWriter(w, os.Stdout),
+			"Error posting message:  %v", err)
 		return
 	}
 
@@ -111,7 +114,8 @@ func groupLister(w http.ResponseWriter, req *http.Request) {
 	groups, err := client.ListGroups()
 	if err != nil {
 		w.WriteHeader(500)
-		fmt.Fprintf(w, "Problem listing groups:  %v", err)
+		fmt.Fprintf(io.MultiWriter(w, os.Stdout),
+			"Problem listing groups:  %v", err)
 		return
 	}
 
@@ -142,7 +146,8 @@ func yammerHandler(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		fmt.Fprintf(w, "Excpected GET or POST, got %s", req.Method)
+		fmt.Fprintf(io.MultiWriter(w, os.Stdout),
+			"Excpected GET or POST, got %s", req.Method)
 		return
 	case "POST":
 		yammerPoster(w, req)
