@@ -52,15 +52,3 @@ func decodeReq(c *Client, u string, rv interface{}) error {
 
 	return nil
 }
-
-// Get the full list of users.
-func (c *Client) ListUsers() ([]User, error) {
-	u := "https://www.yammer.com/api/v1/users.json"
-
-	rv := make([]User, 0)
-	if err := decodeReq(c, u, &rv); err != nil {
-		return rv, err
-	}
-
-	return rv, nil
-}
