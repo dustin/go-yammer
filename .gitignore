@@ -1,0 +1,8 @@
+#*
+*.6
+*.a
+*~
+/tools/auth/auth
+/tools/listusers/listusers
+6.out
+_*
