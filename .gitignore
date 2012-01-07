@@ -5,6 +5,7 @@
 /tools/.auth
 /tools/auth/auth
 /tools/list/list
+/tools/pivotal/pivotal
 /tools/post/post
 6.out
 _*
