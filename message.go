@@ -48,7 +48,7 @@ func (c *Client) MessagesByTopic(topic int) ([]Message, error) {
 
 	rv := rvT{}
 
-	if err := decodeReq(c, u, &rv); err != nil {
+	if err := decodeReq(c, u, &rv, map[string]string{}); err != nil {
 		return rv.Messages, err
 	}
 

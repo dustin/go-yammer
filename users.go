@@ -5,7 +5,7 @@ func (c *Client) ListUsers() ([]User, error) {
 	u := "https://www.yammer.com/api/v1/users.json"
 
 	rv := make([]User, 0)
-	if err := decodeReq(c, u, &rv); err != nil {
+	if err := decodeReq(c, u, &rv, map[string]string{}); err != nil {
 		return rv, err
 	}
 

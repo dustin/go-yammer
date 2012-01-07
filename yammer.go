@@ -32,8 +32,9 @@ func New(authFile, key, secret string) (Client, error) {
 	return client, nil
 }
 
-func decodeReq(c *Client, u string, rv interface{}) error {
-	params := make(map[string]string)
+func decodeReq(c *Client, u string, rv interface{},
+	params map[string]string) error {
+
 	res, err := c.oauth.Get(u, params)
 	if err != nil {
 		return err
