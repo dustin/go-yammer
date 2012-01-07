@@ -46,6 +46,14 @@ type Group struct {
 	CreatedAt   *string `json:"created_at"`
 }
 
+type MessageRequest struct {
+	Body      string
+	GroupId   int
+	ReplyTo   int
+	DirectTo  int
+	Broadcast bool
+}
+
 type Client struct {
 	oauth oauth.OAuth
 }
