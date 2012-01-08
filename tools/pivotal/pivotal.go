@@ -6,7 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"log"
+	"log/syslog"
 	"net/http"
 	"net/url"
 	"os"
@@ -16,7 +16,7 @@ import (
 )
 
 var key, secret, filename, addr string
-var debug, transmit bool
+var debug, transmit, logSyslog bool
 
 var client yammer.Client
 
@@ -39,9 +39,13 @@ type inputxml struct {
 	} `xml:"stories>story"`
 }
 
+var log io.Writer
+
 func init() {
+
 	flag.BoolVar(&debug, "debug", false, "enable debug logging")
 	flag.BoolVar(&transmit, "xmit", true, "enable transmitting (disable for debug)")
+	flag.BoolVar(&logSyslog, "syslog", false, "log to syslog")
 	flag.StringVar(&key, "key", "", "consumer key")
 	flag.StringVar(&secret, "secret", "", "consumer secret")
 	flag.StringVar(&filename, "authfile", "../.auth", "auth file path")
@@ -49,12 +53,19 @@ func init() {
 	flag.StringVar(&addr, "addr", ":8888", "web bind address")
 }
 
+func logF(format string, v ...interface{}) {
+	fmt.Fprintf(log, format, v...)
+	if !logSyslog {
+		log.Write([]byte("\n"))
+	}
+}
+
 func parseInt(params url.Values, key string) (rv int) {
 	s := params.Get(key)
 	if s != "" {
 		i, err := strconv.ParseInt(params.Get(key), 10, 0)
 		if err != nil {
-			log.Printf("Error parsing param %s: %v", key, err)
+			logF("Error parsing param %s: %v", key, err)
 			return
 		}
 		rv = int(i)
@@ -65,21 +76,21 @@ func parseInt(params url.Values, key string) (rv int) {
 func debugLog(input inputxml, output yammer.MessageRequest) {
 	inputj, e := json.MarshalIndent(input, "", "  ")
 	if e != nil {
-		log.Printf("Error generating input JSON:  %v", e)
+		logF("Error generating input JSON:  %v", e)
 		return
 	}
 	outputj, e := json.MarshalIndent(output, "", "  ")
 	if e != nil {
-		log.Printf("Error generating output JSON:  %v", e)
+		logF("Error generating output JSON:  %v", e)
 		return
 	}
 
-	log.Printf("Input:\n%s\nOutput:\n%s\n", inputj, outputj)
+	logF("Input:\n%s\nOutput:\n%s\n", inputj, outputj)
 
 }
 
 func splitWrite(w io.Writer) io.Writer {
-	return io.MultiWriter(w, os.Stdout)
+	return io.MultiWriter(w, log)
 }
 
 func yammerPoster(w http.ResponseWriter, req *http.Request) {
@@ -111,7 +122,7 @@ func yammerPoster(w http.ResponseWriter, req *http.Request) {
 	if debug {
 		go debugLog(input, yreq)
 	} else {
-		log.Printf("Yammer msg: %s", yreq.Body)
+		logF("Yammer msg: %s", yreq.Body)
 	}
 
 	if transmit {
@@ -121,7 +132,7 @@ func yammerPoster(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 	} else {
-		log.Printf("[transmission disabled]")
+		logF("[transmission disabled]")
 	}
 
 	w.WriteHeader(201)
@@ -175,6 +186,17 @@ func yammerHandler(w http.ResponseWriter, req *http.Request) {
 func main() {
 	flag.Parse()
 
+	if logSyslog {
+		var err error
+		log, err = syslog.New(syslog.LOG_INFO, "pivotal")
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Can't initialize syslog:  %v", err)
+			os.Exit(1)
+		}
+	} else {
+		log = os.Stdout
+	}
+
 	var err error
 	if err = yammer.VerifyKeyAndSecret(key, secret); err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
@@ -184,16 +206,18 @@ func main() {
 
 	client, err = yammer.New(filename, key, secret)
 	if err != nil {
-		log.Fatalf("Error making client:  %v", err)
+		logF("Error making client:  %v", err)
+		os.Exit(1)
 	}
 
 	http.HandleFunc("/", yammerHandler)
-	log.Printf("Listening on %s", addr)
+	logF("Listening on %s", addr)
 	if !transmit {
-		log.Printf("[transmission disabled]")
+		logF("[transmission disabled]")
 	}
 	err = http.ListenAndServe(addr, nil)
 	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
+		logF("ListenAndServe: ", err)
+		os.Exit(1)
 	}
 }
