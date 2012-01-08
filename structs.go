@@ -19,14 +19,14 @@ type User struct {
 	Domains           []string                 `json:"network_domains,omitempty"`
 	Kids              *string                  `json:"kids_names,omitempty"`
 	PreviousCompanies []map[string]interface{} `json:"previous_companies,omitempty"`
-	FullName          *string                  `json:"full_name,omitempty"`
+	FullName          string                   `json:"full_name"`
 	Birthday          *string                  `json:"birth_date,omitempty"`
 	Expertise         *string                  `json:",omitempty"`
 	Summary           *string                  `json:",omitempty"`
 	NetworkID         int                      `json:"network_id,omitempty"`
-	Name              *string                  `json:",omitempty"`
-	NetworkName       *string                  `json:"network_name,omitempty"`
-	Interests         *string                  `json:",omitempty"`
+	Name              string
+	NetworkName       *string `json:"network_name,omitempty"`
+	Interests         *string `json:",omitempty"`
 	Contact           map[string]interface{}
 	HireDate          *string `json:"hire_date,omitempty"`
 	ID                int
