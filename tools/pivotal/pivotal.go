@@ -16,6 +16,7 @@ import (
 )
 
 var key, secret, filename, addr string
+var debug bool
 
 var client yammer.Client
 
@@ -39,6 +40,7 @@ type inputxml struct {
 }
 
 func init() {
+	flag.BoolVar(&debug, "debug", false, "enable debug logging")
 	flag.StringVar(&key, "key", "", "consumer key")
 	flag.StringVar(&secret, "secret", "", "consumer secret")
 	flag.StringVar(&filename, "authfile", "../.auth", "auth file path")
@@ -98,7 +100,11 @@ func yammerPoster(w http.ResponseWriter, req *http.Request) {
 		DirectTo: parseInt(params, "direct_to"),
 	}
 
-	go debugLog(input, yreq)
+	if debug {
+		go debugLog(input, yreq)
+	} else {
+		log.Printf("Yammer msg: %s", yreq.Body)
+	}
 
 	if err := client.PostMessage(yreq); err != nil {
 		w.WriteHeader(500)
