@@ -23,8 +23,6 @@ func init() {
 	flag.IntVar(&directTo, "directTo", 0, "direct to (optional)")
 }
 
-type listerFunc func(c *yammer.Client) (interface{}, error)
-
 func main() {
 	flag.Parse()
 
