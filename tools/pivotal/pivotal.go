@@ -48,13 +48,17 @@ func init() {
 	flag.StringVar(&addr, "addr", ":8888", "web bind address")
 }
 
-func parseInt(params url.Values, key string) int {
-	i, err := strconv.ParseInt(params.Get(key), 10, 0)
-	if err != nil {
-		log.Printf("Error parsing param %s: %v", key, err)
-		return 0
+func parseInt(params url.Values, key string) (rv int) {
+	s := params.Get(key)
+	if s != "" {
+		i, err := strconv.ParseInt(params.Get(key), 10, 0)
+		if err != nil {
+			log.Printf("Error parsing param %s: %v", key, err)
+			return
+		}
+		rv = int(i)
 	}
-	return int(i)
+	return
 }
 
 func debugLog(input inputxml, output yammer.MessageRequest) {
