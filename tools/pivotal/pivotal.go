@@ -16,7 +16,7 @@ import (
 )
 
 var key, secret, filename, addr string
-var debug bool
+var debug, transmit bool
 
 var client yammer.Client
 
@@ -41,6 +41,7 @@ type inputxml struct {
 
 func init() {
 	flag.BoolVar(&debug, "debug", false, "enable debug logging")
+	flag.BoolVar(&transmit, "xmit", true, "enable transmitting (disable for debug)")
 	flag.StringVar(&key, "key", "", "consumer key")
 	flag.StringVar(&secret, "secret", "", "consumer secret")
 	flag.StringVar(&filename, "authfile", "../.auth", "auth file path")
@@ -110,11 +111,15 @@ func yammerPoster(w http.ResponseWriter, req *http.Request) {
 		log.Printf("Yammer msg: %s", yreq.Body)
 	}
 
-	if err := client.PostMessage(yreq); err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(io.MultiWriter(w, os.Stdout),
-			"Error posting message:  %v\n", err)
-		return
+	if transmit {
+		if err := client.PostMessage(yreq); err != nil {
+			w.WriteHeader(500)
+			fmt.Fprintf(io.MultiWriter(w, os.Stdout),
+				"Error posting message:  %v\n", err)
+			return
+		}
+	} else {
+		log.Printf("[transmission disabled]")
 	}
 
 	w.WriteHeader(201)
@@ -183,6 +188,9 @@ func main() {
 
 	http.HandleFunc("/", yammerHandler)
 	log.Printf("Listening on %s", addr)
+	if !transmit {
+		log.Printf("[transmission disabled]")
+	}
 	err = http.ListenAndServe(addr, nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
