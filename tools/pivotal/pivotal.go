@@ -78,12 +78,15 @@ func debugLog(input inputxml, output yammer.MessageRequest) {
 
 }
 
+func splitWrite(w io.Writer) io.Writer {
+	return io.MultiWriter(w, os.Stdout)
+}
+
 func yammerPoster(w http.ResponseWriter, req *http.Request) {
 	input := inputxml{}
 	if err := xml.Unmarshal(req.Body, &input); err != nil {
 		w.WriteHeader(400)
-		fmt.Fprintf(io.MultiWriter(w, os.Stdout),
-			"Error parsing input:  %v\n", err)
+		fmt.Fprintf(splitWrite(w), "Error parsing input:  %v\n", err)
 		return
 	}
 
@@ -114,8 +117,7 @@ func yammerPoster(w http.ResponseWriter, req *http.Request) {
 	if transmit {
 		if err := client.PostMessage(yreq); err != nil {
 			w.WriteHeader(500)
-			fmt.Fprintf(io.MultiWriter(w, os.Stdout),
-				"Error posting message:  %v\n", err)
+			fmt.Fprintf(splitWrite(w), "Error posting message:  %v\n", err)
 			return
 		}
 	} else {
@@ -129,8 +131,7 @@ func groupLister(w http.ResponseWriter, req *http.Request) {
 	groups, err := client.ListGroups()
 	if err != nil {
 		w.WriteHeader(500)
-		fmt.Fprintf(io.MultiWriter(w, os.Stdout),
-			"Problem listing groups:  %v", err)
+		fmt.Fprintf(splitWrite(w), "Problem listing groups:  %v", err)
 		return
 	}
 
@@ -161,7 +162,7 @@ func yammerHandler(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		fmt.Fprintf(io.MultiWriter(w, os.Stdout),
+		fmt.Fprintf(splitWrite(w),
 			"Expected GET or POST, got %s\n", req.Method)
 		return
 	case "POST":
