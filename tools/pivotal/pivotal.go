@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/dustin/yammer.go"
 )
@@ -104,14 +105,17 @@ func yammerPoster(w http.ResponseWriter, req *http.Request) {
 
 	params := req.URL.Query()
 
-	tag := params.Get("tag")
-	if tag != "" {
-		tag = fmt.Sprintf(" #%s", tag)
+	tags := []string{fmt.Sprintf("#%s", input.EventType)}
+
+	if tag := params.Get("tag"); tag != "" {
+		tags = append(tags, fmt.Sprintf("#%s", tag))
+		tags = append(tags, fmt.Sprintf("#%s_%s", tag, input.EventType))
 	}
 
 	// project ID, story ID
-	msg := fmt.Sprintf("%s%s\nhttps://www.pivotaltracker.com/projects/%d?story_id=%d",
-		input.Description, tag, input.ProjectId, input.Stories[0].ID)
+	msg := fmt.Sprintf("%s %s\nhttps://www.pivotaltracker.com/projects/%d?story_id=%d",
+		input.Description, strings.Join(tags, " "),
+		input.ProjectId, input.Stories[0].ID)
 
 	yreq := yammer.MessageRequest{
 		Body:     msg,
