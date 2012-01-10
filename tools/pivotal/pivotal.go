@@ -105,7 +105,7 @@ func yammerPoster(w http.ResponseWriter, req *http.Request) {
 
 	params := req.URL.Query()
 
-	tags := []string{fmt.Sprintf("#%s", input.EventType)}
+	tags := []string{fmt.Sprintf("#pt_%s", input.EventType)}
 
 	if tag := params.Get("tag"); tag != "" {
 		tags = append(tags, fmt.Sprintf("#%s", tag))
