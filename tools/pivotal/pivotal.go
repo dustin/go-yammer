@@ -23,6 +23,7 @@ var client yammer.Client
 type inputxml struct {
 	ID          int
 	Version     int
+	EventType   string `xml:"event_type>"`
 	Occurred    string `xml:"occurred_at>"`
 	Author      string
 	ProjectId   int `xml:"project_id>"`
