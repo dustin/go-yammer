@@ -22,22 +22,22 @@ var debug, transmit, logSyslog bool
 var client yammer.Client
 
 type inputxml struct {
-	ID          int
-	Version     int
-	EventType   string `xml:"event_type>"`
-	Occurred    string `xml:"occurred_at>"`
-	Author      string
-	ProjectId   int `xml:"project_id>"`
-	Description string
+	ID          int    `xml:"id"`
+	Version     int    `xml:"version"`
+	EventType   string `xml:"event_type"`
+	Occurred    string `xml:"occurred_at"`
+	Author      string `xml:"author"`
+	ProjectId   int    `xml:"project_id"`
+	Description string `xml:"description"`
 	Stories     []struct {
 		XMLName   xml.Name `xml:"story"`
-		ID        int
-		URL       string
-		Name      string
-		StoryType string `xml:"story_type>"`
-		State     string `xml:"current_state>"`
-		Owner     string `xml:"owned_by>"`
-		Requestor string `xml:"requested_by>"`
+		ID        int      `xml:"id"`
+		URL       string   `xml:"url"`
+		Name      string   `xml:"name"`
+		StoryType string   `xml:"story_type"`
+		State     string   `xml:"current_state"`
+		Owner     string   `xml:"owned_by"`
+		Requestor string   `xml:"requested_by"`
 	} `xml:"stories>story"`
 }
 
