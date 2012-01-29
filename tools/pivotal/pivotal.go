@@ -97,7 +97,8 @@ func splitWrite(w io.Writer) io.Writer {
 
 func yammerPoster(w http.ResponseWriter, req *http.Request) {
 	input := inputxml{}
-	if err := xml.Unmarshal(req.Body, &input); err != nil {
+	d := xml.NewDecoder(req.Body)
+	if err := d.Decode(&input); err != nil {
 		w.WriteHeader(400)
 		fmt.Fprintf(splitWrite(w), "Error parsing input:  %v\n", err)
 		return
