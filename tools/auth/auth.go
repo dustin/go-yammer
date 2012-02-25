@@ -9,7 +9,7 @@ import (
 
 	"github.com/dustin/yammer.go"
 
-	oauth "github.com/alloy-d/goauth"
+	oauth "github.com/dustin/goauth"
 )
 
 var key, secret, filename string

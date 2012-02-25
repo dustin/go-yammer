@@ -2,7 +2,7 @@
 package yammer
 
 import (
-	oauth "github.com/alloy-d/goauth"
+	oauth "github.com/dustin/goauth"
 )
 
 // User as returned from ListUsers, etc...
