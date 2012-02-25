@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	oauth "github.com/alloy-d/goauth"
+	"github.com/dustin/goauth"
 )
 
 func VerifyKeyAndSecret(key, secret string) error {
@@ -17,19 +17,22 @@ func VerifyKeyAndSecret(key, secret string) error {
 	return nil
 }
 
-// Get a client from the given auth file, consumer key, and secret
-func New(authFile, key, secret string) (Client, error) {
-	client := Client{
-		oauth: oauth.OAuth{
-			SignatureMethod: oauth.HMAC_SHA1,
-			ConsumerKey:     key,
-			ConsumerSecret:  secret,
-		},
+// Get a client using the given OAuth structure
+func New(o oauth.OAuth) Client {
+	return Client{oauth: o}
+}
+
+// Load OAuth data from a file.
+func NewFromFile(authFile, key, secret string) (Client, error) {
+	o := oauth.OAuth{
+		SignatureMethod: oauth.HMAC_SHA1,
+		ConsumerKey:     key,
+		ConsumerSecret:  secret,
 	}
-	if err := client.oauth.Load(authFile); err != nil {
-		return client, err
+	if err := o.Load(authFile); err != nil {
+		return Client{}, err
 	}
-	return client, nil
+	return New(o), nil
 }
 
 func decodeReq(c *Client, u string, rv interface{},

@@ -30,7 +30,7 @@ func listTool(key, secret, filename string, Lister listerFunc) {
 		os.Exit(1)
 	}
 
-	client, err := yammer.New(filename, key, secret)
+	client, err := yammer.NewFromFile(filename, key, secret)
 	if err != nil {
 		log.Fatalf("Error making client:  %v", err)
 	}
