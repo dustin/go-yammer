@@ -85,6 +85,7 @@ type Network struct {
 	Name          string
 	PrivateUnseen int `json:"private_unseen_thread_count"`
 	Unseen        int `json:"unseen_notification_count"`
+	Permalink     string
 }
 
 // Message request object for PostMessage
