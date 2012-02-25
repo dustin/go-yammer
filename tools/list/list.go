@@ -51,8 +51,9 @@ func main() {
 	flag.Parse()
 
 	funcs := map[string]listerFunc{
-		"groups": func(c *yammer.Client) (interface{}, error) { return c.ListGroups() },
-		"users":  func(c *yammer.Client) (interface{}, error) { return c.ListUsers() },
+		"networks": func(c *yammer.Client) (interface{}, error) { return c.ListNetworks() },
+		"groups":   func(c *yammer.Client) (interface{}, error) { return c.ListGroups() },
+		"users":    func(c *yammer.Client) (interface{}, error) { return c.ListUsers() },
 		"topic": func(c *yammer.Client) (interface{}, error) {
 			n, err := strconv.ParseInt(arg, 10, 0)
 			if err != nil {

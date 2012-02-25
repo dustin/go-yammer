@@ -77,6 +77,16 @@ type Message struct {
 	YURL          *string `json:"web_url"`
 }
 
+// A Network
+type Network struct {
+	Notifications int `json:"unseen_message_count"`
+	Community     bool
+	URL           string `json:"web_url"`
+	Name          string
+	PrivateUnseen int `json:"private_unseen_thread_count"`
+	Unseen        int `json:"unseen_notification_count"`
+}
+
 // Message request object for PostMessage
 type MessageRequest struct {
 	Body      string // Message body (required)
