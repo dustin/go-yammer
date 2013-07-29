@@ -11,7 +11,7 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/dustin/yammer.go"
+	"github.com/dustin/go-yammer"
 )
 
 var key, secret, filename string

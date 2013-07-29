@@ -13,7 +13,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/dustin/yammer.go"
+	"github.com/dustin/go-yammer"
 )
 
 var key, secret, filename, addr string

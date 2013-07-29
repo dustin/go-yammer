@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/dustin/yammer.go"
+	"github.com/dustin/go-yammer"
 
 	oauth "github.com/dustin/goauth"
 )
